@@ -329,7 +329,7 @@ finally{
 Interger Character 클래스만이 기본타입의 이름과 다르다.
 
 
-//-쓰레드
+-쓰레드
 동작하고 있는 프로그램을 프로세스(Process)라고 한다. 보통 한 개의 프로세스는 한 가지의 일을 하지만, 쓰레드를 이용하면 한 프로세스 내에서 두 가지 또는 그 이상의 일을 동시에 할 수 있게 된다. Thread는 직접 상속 받아 스레드 생성할수있으며, Runnable 인터페이스를 구현해서 생성할 수 있다.  run()메소드를 오버라이딩 해서 사용하면된다.
 java.lang.Thread에서 제공이된다.
 - 한번 종료한 스레드는 다시 시작시킬수 없다
@@ -337,19 +337,110 @@ java.lang.Thread에서 제공이된다.
 - 한 스레드에서 다른 스레드를 강제 종료할 수 있다.
 - 쓰레드 상태는 JVM에 의해 기록 관리된다.
 
+-제네릭스
+ㅇArrayList<String> aList = new ArrayList<String>();
+위에서 사용한 코드의 <String> 이라는 제네릭스 표현식은 "ArrayList 안에 담을 수 있는 자료형은 String 타입 뿐이다" 라는 것을 의미한다.
+ㅇArrayList aList = new ArrayList();
+두 코드의 차이점은 ArrayList 라는 자료형 타입 바로 옆에 <String> 과 같은 문구가 있느냐 없느냐의 차이이다
+※ 여기서는 제네릭스의 타입으로 String 자료형만을 예로 들었지만 <Integer>등 어떤 자료형도 사용할 수 있다.
+즉, 제너릭스를 이용하면 좀 더 명확한 타입체크가 가능해 지는 것이다.
+----------------------------------------------
+-ArrayList aList = new ArrayList();
+ArrayList aList = new ArrayList();
+aList.add("hello");
+aList.add("java");
+
+String hello = (String) aList.get(0);
+String java = (String) aList.get(1);
+aList에 hello, java를 추가했을경우에 그 List들이 Object 형식으로
+인식이되기 때문에 형변환을 명시적으로 String으로 해주어야한다.
+----------------------------------------------
+-ArrayList<String> aList = new ArrayList<String>();
+ArrayList<String> aList = new ArrayList<String>();
+aList.add("hello");
+aList.add("java");
+
+String hello = aList.get(0);
+String java = aList.get(1);
+제네릭스를 사용한다면 aList안에는 String의 형식들만 있을수있으므로
+형변환을 따로 해주지않아도 String으로 인식되게 된다.
+----------------------------------------------
+
+
+-call by value
+메소드에 값(primitive type)을 전달하는 것과 객체(reference type)를 전달하는 것에는 큰 차이가 있다. 
+----------------------------------------------
+class Updater {
+    public void update(int count) {	//int count로써 값을 전달하여줬다.
+        count++;
+    }
+}
+
+public class Counter {
+    int count = 0;  // 객체변수
+    public static void main(String[] args) {        
+        Counter myCounter = new Counter();        
+        System.out.println("before update:"+myCounter.count);
+        Updater myUpdater = new Updater();
+        myUpdater.update(myCounter.count);
+        System.out.println("after update:"+myCounter.count);
+    }
+}
+----------------------------------------------
+class Updater {
+    public void update(Counter counter) { 	//Counter counter로써 객체를 전달하였다.
+        counter.count++;
+    }
+}
+
+public class Counter {
+    int count = 0;
+    public static void main(String[] args) {
+        Counter myCounter = new Counter();
+        System.out.println("before update:"+myCounter.count);
+        Updater myUpdater = new Updater();
+        myUpdater.update(myCounter);
+        System.out.println("after update:"+myCounter.count);
+    }
+}
+----------------------------------------------
+클래스에서 그냥 일반적으로 값을 전달하게되면 그 클래스의 값은 다시 돌아오게된다.
+-Call by reference
+참조의의한 값 즉 객체를 전달하게된다면 값이 아닌 주소를 넘겨주게 됨으로써,
+주소를 참조하여 데이터를 변경할수있다.
+즉 Call by reference는 메서드 호출 시 사용되는 인자 값의 메모리에 저장되어있는 주소(Address)를 복사하여 보낸다.
+그렇기때문에 주소가 가리키는 그 값이 변경되게되는것이다.
+
+
+-get set
+접근자 public을 사용하였을때에 맴버변수값을 변경할 경우 정보의 변질이 쉽고 보안이 취약하다는 점 때문에 중요한 정보의 경우엔 private 접근 지정자로 외부의 접근을 제한하는 방법을 주로 선택한다. 이 경우 인스턴스를 통해 외부에서 접근할수 없기에 메서드를 이용해 접근을 하게 되고, 그때 사용하는 메서드가 바로 getter메서드 setter메서드 라고 한다.
+-getter메서드
+ㅇ반드시 소문자 get을 접두사로 사용 
+ㅇget다음에 이어지는 단어의 첫번째 글자는 반드시 대문자로 작성
+ㅇ반드시 리턴값이 있어야 한다 (void 불가)
+ㅇ매개변수가 없어야 한다.
+public String getName(){
+	return name;
+}
+-setter메서드
+ㅇ반드시 소문자 set을 접두사로 사용
+ㅇset다음에 이어지는 단어의 첫번째 글자는 반드시 대문자로 작성
+ㅇ반드시 리턴값이 없어야 한다 (반드시 void형 이어야 한다)
+ㅇ반드시 매개변수가 있어야한다.
+public void setName(String name){
+	this.name = name;
+}
 
 ㅇ20181121
 + 해야할 것
-get set
-call by value
-//비동기 동기
-//람다식
+-call by value
+-제네릭
+-get set
 *
 framework 라이브러리 차이점//발표
 mvc->mvvm,mvp//발표
 *
 arraylist, map, hash, stack, Queue
--제네릭
 ++ㅇ자료구조++ 
 *
 *코틀린 책빌려서 예습
@@ -357,6 +448,8 @@ arraylist, map, hash, stack, Queue
 3장전의 코틀린 문법 위주로 보자...
 보자............................. 
 예제... git hub에 올리자ㅋㅋㅋㅋㅋㅋ
-//알고리즘
 git hub...
 *
+//알고리즘
+//비동기 동기
+//람다식
